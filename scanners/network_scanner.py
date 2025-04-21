@@ -1,4 +1,3 @@
-# scanners/network_scanner.py
 import subprocess
 import platform
 import ipaddress
@@ -44,15 +43,17 @@ def get_network_range(local_ip):
     """Returns the network range (subnet) based on the local IP."""
     if not local_ip:
         return None
+
     
-    ip_obj = ipaddress.IPv4Address(local_ip)
-    
-    if ip_obj.is_private:
-        network = ipaddress.IPv4Network(f"{local_ip}/24", strict=False)
-        print(f"[*] Local network: {network}")
-        return str(network)
-    else:
-        print("[-] Public IPs are not supported for local scanning.")
+    try:
+        result = subprocess.run(['ip', 'addr', 'show', 'eth0'], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        result_str = result.stdout.decode('utf-8')
+        
+        network_info = result_str.split('inet ')[1].split(' ')[0]
+        print(f"[*] Local network (from eth0): {network_info}")
+        return network_info
+    except Exception as e:
+        print(f"[-] Error retrieving network details: {e}")
         return None
 
 def get_local_ips():
@@ -71,3 +72,4 @@ def get_local_ips():
 if __name__ == "__main__":
     hosts = get_local_ips()
     print(f"\nDiscovered live hosts: {hosts}")
+
