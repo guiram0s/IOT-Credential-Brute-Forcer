@@ -2,9 +2,9 @@
 from scanners.network_scanner import get_local_ips
 from scanners.port_scanner import scan_ports
 from scanners.device_identifier import identify_device
-from bruteforce.http_bruteforce import http_bruteforce
+from bruteforce.http_brute import http_bruteforce
 from bruteforce.ssh_bruteforce import ssh_bruteforce
-from bruteforce.telnet_bruteforce import telnet_bruteforce
+from bruteforce.telnet_brute import telnet_bruteforce
 
 
 def main():

@@ -3,6 +3,7 @@ import subprocess
 import platform
 import ipaddress
 import re
+import socket
 
 def is_linux():
     return platform.system().lower() == "linux"
@@ -27,7 +28,19 @@ def ping_sweep(subnet):
 
     return live_hosts
 
+def get_local_ips():
+    """Returns a list of local IP addresses on the machine."""
+    local_ips = []
+    hostname = socket.gethostname()
+    try:
+        local_ips.append(socket.gethostbyname(hostname))
+        print(f"[*] Local IP: {hostname} -> {socket.gethostbyname(hostname)}")
+    except socket.gaierror:
+        print(f"[-] Unable to retrieve local IP address")
+    return local_ips
+
 if __name__ == "__main__":
     subnet = input("Enter subnet (e.g., 192.168.1.0/24): ")
     hosts = ping_sweep(subnet)
     print(f"\nDiscovered live hosts: {hosts}")
+
