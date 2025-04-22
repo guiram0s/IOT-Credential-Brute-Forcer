@@ -14,14 +14,16 @@ def ssh_bruteforce(ip, port=22, creds=[('root', 'root'), ('admin', 'admin'), ('u
             client.close()
             return (username, password)
 
-        except paramiko.ssh_exception.SSHException as e:
-            if "DSA" in str(e) or "key size" in str(e) or "no matching key exchange" in str(e):
+        except (paramiko.ssh_exception.SSHException, ValueError) as e:
+            if "DSA" in str(e) or "key size" in str(e) or "no matching key exchange" in str(e) or "p must be" in str(e):
                 print(f"[!] Insecure SSH service detected on {ip}:{port} — {str(e)}")
                 print("[-] Skipping brute-force due to insecure crypto configuration.")
                 return None
             continue
 
         except Exception as e:
+            # print error in case of debugging
+            # print(f"[DEBUG] Unknown exception: {str(e)}")
             continue
 
     print("[-] No valid SSH credentials found.")
