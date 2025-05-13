@@ -1,7 +1,7 @@
 # scanners/port_scanner.py
 import socket
 
-def scan_ports(host, ports=[22, 23, 80, 443, 8080]):
+def scan_ports(host, ports=[22, 23, 80, 443, 8080, 5000]):
     open_ports = []
     print(f"[*] Scanning ports on {host}")
     for port in ports:
