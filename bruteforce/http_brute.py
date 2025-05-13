@@ -21,7 +21,7 @@ def http_bruteforce(ip, port=80):
             if any(keyword in response.text.lower() for keyword in failure_keywords):
                 continue
 
-            if response.url != url or response.cookies:
+            if response.cookies:
                 print(f"[+] HTTP login success: {username}:{password}")
                 return (username, password)
 
