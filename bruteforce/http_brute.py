@@ -1,7 +1,7 @@
 import requests
 from bruteforce.credentials_loader import load_credentials
 
-def http_bruteforce(ip, port=5000):
+def http_bruteforce(ip, port=80):
     creds = load_credentials()
     url = f"http://{ip}:{port}/"
 
