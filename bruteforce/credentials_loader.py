@@ -1,6 +1,11 @@
 import json
+import os
 
-def load_credentials(filepath="common_credentials.json"):
+def load_credentials():
+    
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    filepath = os.path.join(base_dir, "..", "defaults", "common_credentials.json")
+
     try:
         with open(filepath, "r") as f:
             data = json.load(f)
