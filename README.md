@@ -8,21 +8,23 @@ This project is a lightweight Python tool designed for **ethical hacking** and *
 
 ## 📁 Project Structure
 
+```
 project/
 ├── bruteforce/
-│ ├── credentials_loader.py
-│ ├── http_bruteforce.py
-│ ├── ssh_bruteforce.py
-│ └── telnet_bruteforce.py
+│   ├── credentials_loader.py
+│   ├── http_bruteforce.py
+│   ├── ssh_bruteforce.py
+│   └── telnet_bruteforce.py
 ├── scanners/
-│ ├── device_identifier.py
-│ ├── network_scanner.py
-│ └── port_scanner.py
+│   ├── device_identifier.py
+│   ├── network_scanner.py
+│   └── port_scanner.py
 ├── defaults/
-│ └── common_credentials.json
+│   └── common_credentials.json
 ├── main.py
 ├── requirements.txt
 └── README.md
+```
 
 ---
 
@@ -55,35 +57,47 @@ project/
    ```bash
    git clone https://github.com/YOUR_USERNAME/iot-bruteforcer.git
    cd iot-bruteforcer
+   ```
+
 2. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
+   ```
+
 3. **Run the tool**:
    ```bash
    python3 main.py
-
-### 📘 How It Works
-
-1. Discover Devices: Performs a ping sweep of the local subnet.
-2. Scan Ports: Identifies open ports on each host.
-3. Identify Device: Attempts to resolve the hostname.
-4. Brute-Force Protocols:
-  -HTTP: You will be prompted to enter the login field names (e.g., username, password).
-  -SSH & Telnet: Uses default credentials from the provided list.
-
-### 🔒 Notes
-
-- Modular Design: Each brute-force module is independent and extendable.
-- Custom Credential Lists: You can expand defaults/common_credentials.json with more usernames/passwords.
-- Smart HTTP Brute: Compares login response with a baseline of failed attempts to infer successful login heuristically.
-
-### 🧪 Disclaimer
-
-This tool is for educational and ethical use only. Always ensure you have explicit permission before scanning or brute-forcing devices on any network. Unauthorized use of this software may be illegal in your jurisdiction.
+   ```
 
 ---
 
-Copyright (c) 2025 
+## 📘 How It Works
 
-Developed by Gui :p
+1. **Discover Devices**: Performs a ping sweep of the local subnet.
+2. **Scan Ports**: Identifies open ports on each host.
+3. **Identify Device**: Attempts to resolve the hostname.
+4. **Brute-Force Protocols**:
+   - HTTP: You will be prompted to enter the login field names you can use BurpSuite or Developer Tools to know, if not you can leave the fields empty and it will use general settings but it is advisable to look for the target's variable's names before running (e.g., `username`, `password`).
+   - SSH & Telnet: Uses default credentials from the provided list.
+
+---
+
+## 🔒 Notes
+
+- **Modular Design**: Each brute-force module is independent and extendable.
+- **Custom Credential Lists**: You can expand `defaults/common_credentials.json` with more usernames/passwords.
+- **Smart HTTP Brute**: Compares login response with a baseline of failed attempts to infer successful login heuristically.
+
+---
+
+
+## 🧪 Disclaimer
+
+> This tool is for **educational and ethical use only**. Always ensure you have **explicit permission** before scanning or brute-forcing devices on any network. Unauthorized use of this software may be illegal in your jurisdiction.
+
+---
+
+Copyright (c) 2025
+
+Developed by Gui :p 
 If you found this useful, consider giving the project a ⭐ on GitHub!
