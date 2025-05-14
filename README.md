@@ -31,7 +31,7 @@ project/
 ## 🚀 Features
 
 - **Network Scanning** (Linux only): Detect live hosts on your subnet.
-- **Port Scanning**: Check for common ports (22, 23, 80, 443, etc.) on discovered devices.
+- **Port Scanning**: Check for common ports (22, 23, 80, etc.) on discovered devices.
 - **Device Identification**: Attempt hostname resolution via reverse DNS.
 - **Brute Force Attacks**:
   - **HTTP Form Auth**: Smart detection of successful logins via content, redirects, cookies.
@@ -55,8 +55,8 @@ project/
 
 1. **Clone the repo**:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/iot-bruteforcer.git
-   cd iot-bruteforcer
+   git clone https://github.com/guiram0s/IOT-Credential-Brute-Forcer.git
+   cd IOT-Credential-Brute-Forcer
    ```
 
 2. **Install dependencies**:
